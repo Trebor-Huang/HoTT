@@ -78,7 +78,7 @@ class Function(Expression):
         return set.union(set(), *[v.variables() for v in self.args])  # Empty set() to avoid empty unions
 
     def __hash__(self):
-        return hash(self.name)
+        return hash(self.constructor) ^ hash(self.args)
 
 
 if __name__ == "__main__":
