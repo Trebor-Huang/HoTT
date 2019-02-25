@@ -21,7 +21,7 @@ class Term:
 class Variable(Term):
     def __init__(self, name, t):
         self.name = name
-        self.t = t
+        self._t = t
 
     def __eq__(self, other):
         return isinstance(other, Variable) and self.name == other.name
@@ -42,10 +42,10 @@ class Variable(Term):
         return hash(self.name)
 
     def type(self):
-        if self.t is None:
+        if self._t is None:
             return None
         else:
-            return self.t
+            return self._t
 
 
 class Constructor:
@@ -78,7 +78,7 @@ class Function(Term):
     def __init__(self, cons, variables):
         self.constructor = cons
         self.args = tuple(variables)
-        self.t = self.constructor.rettype
+        self._t = self.constructor.rettype
 
     def __eq__(self, other):
         return isinstance(other, Function) and self.constructor == other.constructor and self.args == other.args
@@ -96,7 +96,7 @@ class Function(Term):
         return hash(self.constructor) ^ hash(self.args)
 
     def type(self):
-        return self.t
+        return self._t
 
 
 class Type(Term):   # Got to wrap the Type hierarchy up...
