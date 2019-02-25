@@ -108,7 +108,7 @@ class Type(Term):   # Got to wrap the Type hierarchy up...
         return isinstance(other, Type) and self.level == other.level
 
     def __repr__(self):
-        return "\\mathscr{U}_{" + str(self.level) + "}"
+        return "U_" + str(self.level)
 
     def substitute(self, var, sub):
         return self
