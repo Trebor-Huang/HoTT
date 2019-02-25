@@ -139,7 +139,7 @@ def get_type(level: int):
 if __name__ == "__main__":
     f = Constructor("f", Type0, (Type0,))
     c = Constructor("c", Type0)
-    g = Constructor("g", Type0, (Type0, Type0))  # TODO: fix
+    g = Constructor("g", Type0, (Type0, Type0))
     x = Variable("x", Type0)
     y = Variable("y", Type0)
 

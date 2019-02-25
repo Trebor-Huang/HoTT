@@ -43,6 +43,7 @@ def substitute(constraints, var, subs):
 def unify(constraints, verbose=False):
     # This algorithm comes from
     # https://en.wikipedia.org/wiki/Unification_(computer_science)#A_unification_algorithm
+    # TODO: impose type constraints
     solutions = []
     while constraints:
         c = constraints.pop()
