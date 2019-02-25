@@ -1,4 +1,4 @@
-from HoTTcore.infrastructure import *
+from HoTTcore.basic import *
 
 """Constraints are represented with a tuple (lhs,rhs)."""
 
@@ -59,20 +59,30 @@ def unify(constraints, verbose=False):
     return solutions
 
 
+def constr(name, arity):
+    return Constructor(name, Type0, (Type0,)*arity)
+
+
+def vriabl(name):
+    return Variable(name, Type0)
+
+
 if __name__ == "__main__":
-    f = Constructor("f", 1)
-    c = Constructor("c", 0)
-    g = Constructor("g", 2)
-    x = Variable("x")
-    y = Variable("y")
-    z = Variable("z")
+    f = constr("f", 1)
+    c = constr("c", 0)
+    g = constr("g", 2)
+    x = vriabl("x")
+    y = vriabl("y")
+    z = vriabl("z")
 
     expr = g(f(x), g(c(), y))
     eqs = [(expr, z), (f(y), f(g(x, c())))]
     sl = unify(eqs, True)
     print(sl)
-    print()
+    input("Paused...")
 
     eqs = [(x, y), (y, f(x))]
-    sl = unify(eqs, True)
-    print(sl)
+    try:
+        sl = unify(eqs, True)
+    except OccursCheckException as e:
+        print(e)
