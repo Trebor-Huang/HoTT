@@ -1,10 +1,19 @@
 from HoTTcore.basic import *
 
-"""Constraints are represented with a tuple (lhs,rhs)."""
 
+class Constraint:
+    def __init__(self, lhs, rhs=None):
+        if rhs is None:
+            lhs, rhs = lhs
+        self.eq = (lhs, rhs)
+        self.lhs = lhs
+        self.rhs = rhs
 
-def equation2str(equation):
-    return str(equation[0]) + " == " + str(equation[1])
+    def __getitem__(self, i):
+        return self.eq[i]
+
+    def __repr__(self):
+        return str(self[0]) + " == " + str(self[1])
 
 
 class UnificationException(Exception):
@@ -16,7 +25,7 @@ class OccursCheckException(UnificationException):
         self.equation = equation
 
     def __str__(self):
-        return "Occurs Check failed: " + equation2str(self.equation)
+        return "Occurs Check failed: " + str(self.equation)
 
 
 class ConflictException(UnificationException):
@@ -24,11 +33,11 @@ class ConflictException(UnificationException):
         self.equation = equation
 
     def __str__(self):
-        return "Conflicting equation: " + equation2str(self.equation)
+        return "Conflicting equation: " + str(self.equation)
 
 
 def substitute(constraints, var, subs):
-    return [(l.substitute(var, subs), r.substitute(var, subs)) for l, r in constraints]
+    return [Constraint(l.substitute(var, subs), r.substitute(var, subs)) for l, r in constraints]
 
 
 def unify(constraints, verbose=False):
@@ -38,17 +47,17 @@ def unify(constraints, verbose=False):
     while constraints:
         c = constraints.pop()
         if verbose:
-            print("Current Equations State:\n" + "\n".join([equation2str(e) for e in constraints]) \
-                  + "\n+++++++++++++++++++\n" + equation2str(c) + "\n")
+            print("Current Equations State:\n" + "\n".join([str(e) for e in constraints])
+                  + "\n+++++++++++++++++++\n" + str(c) + "\n")
         if c[0] == c[1]:  # DELETE
             pass
         elif isinstance(c[0], Function) and isinstance(c[1], Function):
             if c[0].constructor == c[1].constructor:  # DECOMPOSE
-                constraints.extend(zip(c[0].args, c[1].args))
+                constraints.extend(map(Constraint, zip(c[0].args, c[1].args)))
             else:  # CONFLICT
                 return ConflictException(c)
         elif isinstance(c[0], Function) and isinstance(c[1], Variable):  # SWAP
-            constraints.append((c[1], c[0]))
+            constraints.append(Constraint(c[1], c[0]))
         elif isinstance(c[1], Function) and isinstance(c[0], Variable):
             if c[0] not in c[1].variables():  # ELIMINATE
                 constraints = substitute(constraints, c[0], c[1])
@@ -76,12 +85,12 @@ if __name__ == "__main__":
     z = vriabl("z")
 
     expr = g(f(x), g(c(), y))
-    eqs = [(expr, z), (f(y), f(g(x, c())))]
+    eqs = [Constraint(expr, z), Constraint(f(y), f(g(x, c())))]
     sl = unify(eqs, True)
     print(sl)
     input("Paused...")
 
-    eqs = [(x, y), (y, f(x))]
+    eqs = [Constraint(x, y), Constraint(y, f(x))]
     try:
         sl = unify(eqs, True)
     except OccursCheckException as e:

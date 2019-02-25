@@ -1,2 +1,2 @@
 from .basic import Term, Variable, Constructor, Function
-from .unification import equation2str, unify
+from .unification import Constraint, unify
