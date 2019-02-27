@@ -48,7 +48,7 @@ class Variable(Term):
             return self._t
 
 
-class Constructor:
+class Constructor:  # TODO: should be a function type???
     def __init__(self, name, returntype, argtype: tuple = None):
         self.name = name
         if argtype is None:
@@ -61,7 +61,7 @@ class Constructor:
         return isinstance(other, Constructor) and self.name == other.name and self.argtype == other.argtype
 
     def __repr__(self):
-        return self.name + "\\" + str(self.arity)
+        return self.name + "/" + str(self.arity)
 
     def __call__(self, *variables):
         if len(variables) == 1 and isinstance(variables[0], tuple):
