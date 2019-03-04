@@ -17,6 +17,9 @@ class Term:
     def type(self):
         pass
 
+    def reduce(self):
+        pass
+
 
 class Variable(Term):
     def __init__(self, name, t):
@@ -47,8 +50,15 @@ class Variable(Term):
         else:
             return self._t
 
+    def reduce(self):
+        return self
 
-class Constructor:  # TODO: should be a function type???
+
+# TODO: Huge refactoring needed; Constructor should have type `args -> rettype`, where the -> operator \
+# is used to generate the original Function type
+
+
+class Constructor:
     def __init__(self, name, returntype, argtype: tuple = None):
         self.name = name
         if argtype is None:
