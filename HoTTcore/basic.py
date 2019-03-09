@@ -18,7 +18,7 @@ class Term:
         pass
 
     def reduce(self):
-        pass
+        return self
 
 
 class Variable(Term):
@@ -27,7 +27,7 @@ class Variable(Term):
         self._t = t
 
     def __eq__(self, other):
-        return isinstance(other, Variable) and self.name == other.name
+        return isinstance(other, Variable) and self.name == other.name and self._t == other._t
 
     def __repr__(self):
         return self.name
@@ -45,17 +45,7 @@ class Variable(Term):
         return hash(self.name)
 
     def type(self):
-        if self._t is None:
-            return None
-        else:
-            return self._t
-
-    def reduce(self):
-        return self
-
-
-# TODO: Huge refactoring needed; Constructor should have type `args -> rettype`, where the -> operator \
-# is used to generate the original Function type
+        return self._t
 
 
 class Constructor:
@@ -68,7 +58,8 @@ class Constructor:
         self.rettype = returntype
 
     def __eq__(self, other):
-        return isinstance(other, Constructor) and self.name == other.name and self.argtype == other.argtype
+        return isinstance(other, Constructor) and self.name == other.name and\
+               self.argtype == other.argtype and self.rettype == other.rettype
 
     def __repr__(self):
         return self.name + "/" + str(self.arity)
@@ -82,6 +73,9 @@ class Constructor:
 
     def __hash__(self):
         return hash(self.name) ^ hash(self.argtype)
+
+    def reduce(self):
+        return Constructor(self.name, self.rettype.reduce(), tuple((i.reduce() for i in self.argtype)))
 
 
 class Function(Term):
@@ -107,6 +101,9 @@ class Function(Term):
 
     def type(self):
         return self._t
+
+    def reduce(self):
+        return Function(self.constructor.reduce(), tuple((i.reduce() for i in self.args)))
 
 
 class Type(Term):   # Got to wrap the Type hierarchy up...
