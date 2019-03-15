@@ -1,7 +1,7 @@
 """Implements typed lambda calculus."""
-from .basic import *
+from basic import *
 
-
+'''
 class To(Constructor):
     # (->) is of type Ui -> Uj -> U(max i,j)
     def __init__(self, l_level, r_level):
@@ -15,9 +15,10 @@ class To(Constructor):
 
 class FunctionType(Function):
     def __repr__(self):
-        return f"({repr(self.args[0])} -> {repr(self.args[1])})"
+        return f"({repr(self.args[0])} -> {repr(self.args[1])})"'''
 
 
+#TODO typed lambda c
 class BoundVariable(Variable):
     def __init__(self, name, t, bound):
         super().__init__(f"BV{str(id(bound))}_{name}", t)
@@ -50,7 +51,7 @@ class Lambda(Term):
         return self.body.variables()
 
     def __hash__(self):
-        return hash(self.bv) ^ hash(self.body)
+        return hash(self.bv) ^ hash(self.body) ^ 0xFFFAAACC
 
     def type(self):
         return None  # TODO
@@ -61,5 +62,33 @@ class Lambda(Term):
 
 class Application(Term):
     def __init__(self, head: Term, body: Term):
-        pass
+        self.head = head
+        self.body = body
+
+    def __eq__(self, other):
+        return self.head == other.head and self.body == other.body
+
+    def __repr__(self):
+        return f"{repr(self.head)} ({repr(self.body)})"
+
+    def substitute(self, var, sub):
+        return Application(self.head.substitute(var, sub), self.body.substitute(var, sub))
+
+    def variables(self):
+        return set.union(self.body.variables(), self.head.variables())
+
+    def __hash__(self):
+        return hash(self.head) ^ hash(self.body) ^ 0xDF
+
+    def type(self):
+        return None  # TODO
+
+    def reduce(self):  # beta reduction todo eta reduction
+        return Application(self.head.reduce(), self.body.reduce())
+
+
+if __name__ == "__main__":
+    x = Variable('x', Type0)
+    Id = Lambda(x, x)
+    print(Id)
 
