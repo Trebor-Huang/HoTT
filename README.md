@@ -1,3 +1,5 @@
+**This project is restarted [here](https://github.com/Trebor-Huang/typical-math).**
+
 # PyHoTT
 Homotopy Type Theory in Python!!! This is a toy implementation of Homotopy Type Theory (with a TeX style programming language) in Python. I plan to include the following features:
 - Type checking (of course)
